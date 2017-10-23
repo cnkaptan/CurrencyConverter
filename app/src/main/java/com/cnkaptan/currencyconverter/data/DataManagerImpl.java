@@ -14,7 +14,6 @@ import rx.schedulers.Schedulers;
 @Singleton
 public class DataManagerImpl implements DataManager {
 
-
     private static final String TAG = DataManagerImpl.class.getSimpleName();
     @NonNull
     private final CurrencyApi currencyApi;
@@ -25,7 +24,7 @@ public class DataManagerImpl implements DataManager {
 
 
     @Override
-    public Observable<ConvertResponse> getMovies(String amount, String from, String to) {
+    public Observable<ConvertResponse> convert(String amount, String from, String to) {
         return currencyApi.convert(amount, from, to)
                 .subscribeOn(Schedulers.io());
     }

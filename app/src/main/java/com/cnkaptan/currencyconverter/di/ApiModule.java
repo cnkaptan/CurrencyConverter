@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 
 import com.cnkaptan.currencyconverter.AppModule;
 import com.cnkaptan.currencyconverter.BuildConfig;
+import com.cnkaptan.currencyconverter.data.DataManager;
 import com.cnkaptan.currencyconverter.data.DataManagerImpl;
 import com.cnkaptan.currencyconverter.data.remote.CurrencyApi;
 
@@ -89,7 +90,7 @@ public class ApiModule {
 
     @Provides
     @Singleton
-    DataManagerImpl provideDataManager(CurrencyApi movieApi){
-        return new DataManagerImpl(movieApi);
+    DataManager provideDataManager(CurrencyApi currencyApi){
+        return new DataManagerImpl(currencyApi);
     }
 }

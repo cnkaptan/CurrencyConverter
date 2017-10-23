@@ -1,6 +1,7 @@
 package com.cnkaptan.currencyconverter.di;
 
 import com.cnkaptan.currencyconverter.AppModule;
+import com.cnkaptan.currencyconverter.ui.ConverterActivity;
 
 import javax.inject.Singleton;
 
@@ -12,5 +13,5 @@ import dagger.Component;
 @Singleton
 @Component(modules = {AppModule.class,ApiModule.class})
 public interface ApiComponent {
-
+    void inject(ConverterActivity converterActivity);
 }

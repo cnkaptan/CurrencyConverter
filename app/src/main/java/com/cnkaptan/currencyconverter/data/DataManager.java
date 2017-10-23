@@ -10,6 +10,6 @@ import rx.Observable;
 
 public interface DataManager {
 
-    Observable<ConvertResponse> getMovies(String amount,String from,String to);
+    Observable<ConvertResponse> convert(String amount,String from,String to);
 
 }

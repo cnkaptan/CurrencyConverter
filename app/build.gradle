@@ -10,7 +10,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        buildConfigField("java.lang.String", "BASE_URL", '"http://http://api.evp.lt/currency/commercial/"')
+        buildConfigField("java.lang.String", "BASE_URL", '"http://api.evp.lt/currency/commercial/"')
     }
     buildTypes {
         release {
