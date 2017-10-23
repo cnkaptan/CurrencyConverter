@@ -57,7 +57,6 @@ public class CurrencyConvertPresenter extends BasePresenter<CurrencyConvertContr
                                 Currency.fromValue(from),
                                 Currency.fromValue(to));
                         getView().hideLoading();
-                        getView().showResult(convertResponse.toString());
                     }
                 }));
     }

@@ -1,5 +1,6 @@
 package com.cnkaptan.currencyconverter.presenter;
 
+import android.annotation.SuppressLint;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,11 +38,12 @@ public class CurrencyListAdapter extends RecyclerView.Adapter<CurrencyListAdapte
         return new CurrencyViewHolder(view);
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void onBindViewHolder(CurrencyViewHolder holder, int position) {
         final Currency currency = keyList.get(position);
         final Double amount = accountCurrency.get(currency);
-        holder.textView.setText(String.format("%s - %s",currency.getValue(),String.valueOf(amount)));
+        holder.textView.setText(String.format("%s - %.2f",currency.getValue(),amount));
 
     }
 

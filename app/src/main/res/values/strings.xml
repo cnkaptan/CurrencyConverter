@@ -2,4 +2,8 @@
     <string name="app_name">CurrencyConverter</string>
     <string name="convert">Convert</string>
     <string name="amount">Amount</string>
+    <string name="empty_ampunt">Please Enter Amount!</string>
+    <string name="same_currency">Please choose different currency</string>
+    <string name="no_money">You dont have anough money at this currecy account</string>
+    <string name="convert_success_message">You have converted 200.00 EUR to 210.54 USD. Commission Fee - 0.00 EUR.</string>
 </resources>

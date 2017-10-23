@@ -1,5 +1,8 @@
 package com.cnkaptan.currencyconverter.data.model;
 
+import android.annotation.SuppressLint;
+
+import com.cnkaptan.currencyconverter.util.Constants;
 import com.cnkaptan.currencyconverter.util.Currency;
 
 import java.util.HashMap;
@@ -26,16 +29,23 @@ public class Consumer {
         }
     }
 
+    @SuppressLint("DefaultLocale")
     public void handleAccount(double withdraw, double deposit, Currency fromCurrency, Currency toCurrency) {
+        double commission = 0.00;
         if (convertCount < 5) {
             account.put(fromCurrency, (account.get(fromCurrency) - withdraw));
             account.put(toCurrency, (account.get(toCurrency) + deposit));
         } else {
-            account.put(fromCurrency, (account.get(fromCurrency) - withdraw - 0.07 * withdraw));
+            commission = 0.07 * withdraw;
+            account.put(fromCurrency, (account.get(fromCurrency) - withdraw - commission));
             account.put(toCurrency, (account.get(toCurrency) + deposit));
         }
         convertCount++;
         accountListener.updateAccount(account);
+        accountListener.showSuccessMessage(String.format(Constants.SUCCESS_MESSAGE_TEMPLATE,
+                withdraw,fromCurrency.getValue(),
+                deposit,toCurrency.getValue(),
+                commission,fromCurrency.getValue()));
     }
 
     public Map<Currency, Double> getAccount() {
@@ -49,5 +59,6 @@ public class Consumer {
 
     public interface AccountListener{
         void updateAccount(Map<Currency,Double> currencies);
+        void showSuccessMessage(String message);
     }
 }

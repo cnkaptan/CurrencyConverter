@@ -30,10 +30,11 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class ConverterActivity extends AppCompatActivity implements CurrencyConvertContract.View {
+public class ConverterActivity extends AppCompatActivity implements CurrencyConvertContract.View,Consumer.AccountListener {
 
     private static final String TAG = ConverterActivity.class.getSimpleName();
     @BindView(R.id.et_amount)
@@ -54,6 +55,7 @@ public class ConverterActivity extends AppCompatActivity implements CurrencyConv
     private String[] currencies = Currency.toStringArray();
     private Consumer consumer;
     private CurrencyListAdapter currencyListAdapter;
+    private CurrencyConvertContract.Presenter presenter;
     @Inject
     DataManager dataManager;
 
@@ -64,25 +66,22 @@ public class ConverterActivity extends AppCompatActivity implements CurrencyConv
         ButterKnife.bind(this);
 
         ((CurrencyConverterApp)getApplicationContext()).getApiComponent().inject(this);
-        consumer = new Consumer(new Consumer.AccountListener() {
-            @Override
-            public void updateAccount(Map<Currency, Double> currencies) {
-                currencyListAdapter.updateDataSet(currencies);
-            }
-        });
-
-        currencyListAdapter = new CurrencyListAdapter(consumer.getAccount());
-        rvCurrencyList.setLayoutManager(new LinearLayoutManager(this));
-        rvCurrencyList.setAdapter(currencyListAdapter);
-
-        final CurrencyConvertContract.Presenter presenter = new CurrencyConvertPresenter(
+        consumer = new Consumer(this);
+        presenter = new CurrencyConvertPresenter(
                 Schedulers.io(),
                 AndroidSchedulers.mainThread(),
                 dataManager,
                 consumer
         );
-
         presenter.attachView(this);
+        initViews();
+
+    }
+
+    private void initViews() {
+        currencyListAdapter = new CurrencyListAdapter(consumer.getAccount());
+        rvCurrencyList.setLayoutManager(new LinearLayoutManager(this));
+        rvCurrencyList.setAdapter(currencyListAdapter);
 
         SpinnerAdapter spinnerAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,currencies);
         spnFrom.setAdapter(spinnerAdapter);
@@ -111,32 +110,6 @@ public class ConverterActivity extends AppCompatActivity implements CurrencyConv
 
             }
         });
-
-
-        btnConvert.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String amount = etAmount.getText().toString();
-                if (TextUtils.isEmpty(amount)){
-                    Toast.makeText(getApplicationContext(),"Amount bos",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if (fromCurrency.equalsIgnoreCase(toCurrency)){
-                    Toast.makeText(getApplicationContext(),"Ayni Tip",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if (Double.valueOf(amount) > consumer.getAmountOfCurrency(Currency.fromValue(fromCurrency))){
-                    Toast.makeText(getApplicationContext(),"Hesapta Para Yok",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                presenter.convert(amount,fromCurrency,toCurrency);
-            }
-        });
-
-
-
     }
 
     @Override
@@ -146,8 +119,10 @@ public class ConverterActivity extends AppCompatActivity implements CurrencyConv
     }
 
     @Override
-    public void showResult(String result) {
-        Toast.makeText(getApplicationContext(),result,Toast.LENGTH_SHORT).show();
+    protected void onDestroy() {
+        super.onDestroy();
+        presenter.detachView();
+        presenter = null;
     }
 
     @Override
@@ -163,5 +138,35 @@ public class ConverterActivity extends AppCompatActivity implements CurrencyConv
     @Override
     public void hideLoading() {
         progressBar.setVisibility(View.GONE);
+    }
+
+    @OnClick(R.id.btn_convert)
+    public void convertClickAction(){
+        String amount = etAmount.getText().toString();
+        if (TextUtils.isEmpty(amount)){
+            Toast.makeText(getApplicationContext(), R.string.empty_ampunt,Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (fromCurrency.equalsIgnoreCase(toCurrency)){
+            Toast.makeText(getApplicationContext(), R.string.same_currency,Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (Double.valueOf(amount) > consumer.getAmountOfCurrency(Currency.fromValue(fromCurrency))){
+            Toast.makeText(getApplicationContext(), R.string.no_money,Toast.LENGTH_SHORT).show();
+            return;
+        }
+        presenter.convert(amount,fromCurrency,toCurrency);
+    }
+
+    @Override
+    public void updateAccount(Map<Currency, Double> currencies) {
+        currencyListAdapter.updateDataSet(currencies);
+    }
+
+    @Override
+    public void showSuccessMessage(String message) {
+        Toast.makeText(getApplicationContext(), message,Toast.LENGTH_SHORT).show();
     }
 }

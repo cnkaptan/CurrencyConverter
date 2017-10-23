@@ -9,7 +9,6 @@ import com.cnkaptan.currencyconverter.MvpView;
 
 public interface CurrencyConvertContract {
     interface View extends MvpView {
-        void showResult(String result);
         void onError(String message);
         void showLoading();
         void hideLoading();
